@@ -260,7 +260,7 @@
 
     // Create image element.
     var icon = document.createElement('img');
-    icon.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M14%2039%20L32%2021%20L50%2039%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E';
+    icon.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M15%2043%20L32%2027%20L49%2043%20M15%2031%20L32%2015%20L49%2031%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E';
     icon.classList.add('link-hotspot-icon');
 
     // Set rotation transform.
