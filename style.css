@@ -926,9 +926,4 @@ body.view-control-buttons .viewControlButton {
   }
 }
 
-
-/* Navigation arrow style: Double Chevron - no glow */
-.link-hotspot { background:transparent; border:0; box-shadow:none; }
-.link-hotspot-icon { width:48px; height:48px; margin:5px; }
-.no-touch .link-hotspot:hover { background:transparent; }
-.mobile .link-hotspot-icon { width:56px; height:56px; margin:5px; }
+/* Navigation arrow style: Classic Marzipano */
