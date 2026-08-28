@@ -927,8 +927,8 @@ body.view-control-buttons .viewControlButton {
 }
 
 
-/* Navigation arrow style: Minimal Floating */
-.link-hotspot { border-radius:50%; background:rgba(255,255,255,.92); box-shadow:0 8px 22px rgba(0,0,0,.25); }
-.link-hotspot-icon { width:48px; height:48px; margin:6px; opacity:.88; }
-.no-touch .link-hotspot:hover { box-shadow:0 12px 28px rgba(0,0,0,.34); }
-.mobile .link-hotspot-icon { width:56px; height:56px; margin:7px; }
+/* Navigation arrow style: Clean Chevron - no glow */
+.link-hotspot { border-radius:50%; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.55); box-shadow:0 7px 18px rgba(0,0,0,.24); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+.link-hotspot-icon { width:48px; height:48px; margin:5px; }
+.no-touch .link-hotspot:hover { background:rgba(255,255,255,.22); box-shadow:0 9px 22px rgba(0,0,0,.30); }
+.mobile .link-hotspot-icon { width:56px; height:56px; margin:5px; }
