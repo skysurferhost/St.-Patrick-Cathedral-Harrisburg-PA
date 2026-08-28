@@ -831,7 +831,7 @@ body.view-control-buttons .viewControlButton {
 
 
 /* ================================================================
-   SKY_SURFER_PREVIEW_ENHANCER_V2
+   SKY_SURFER_PREVIEW_ENHANCER_V23
    Destination preview for Marzipano link hotspots.
    Desktop: hover. Touch: first tap previews, second tap enters.
    ================================================================ */
@@ -927,3 +927,12 @@ body.view-control-buttons .viewControlButton {
 }
 
 /* Navigation arrow style: Classic Marzipano */
+
+/* Sky Surfer casual image-copy protection */
+#pano, #pano canvas, #pano img, .scene-preview-image {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+}
+#pano img, .scene-preview-image { -webkit-user-drag: none !important; user-drag: none !important; }
+

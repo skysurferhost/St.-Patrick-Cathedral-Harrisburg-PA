@@ -30,6 +30,13 @@
   var autorotateToggleElement = document.querySelector('#autorotateToggle');
   var fullscreenToggleElement = document.querySelector('#fullscreenToggle');
 
+  // SKY SURFER: discourage casual saving/copying of panorama imagery.
+  document.addEventListener('contextmenu', function(event) { event.preventDefault(); }, { capture: true });
+  document.addEventListener('dragstart', function(event) {
+    var tag = event.target && event.target.tagName ? event.target.tagName.toLowerCase() : '';
+    if (tag === 'img' || tag === 'canvas' || tag === 'a') event.preventDefault();
+  }, { capture: true });
+
   // Detect desktop or mobile mode.
   if (window.matchMedia) {
     var setMode = function() {
@@ -78,7 +85,7 @@
       { cubeMapPreviewUrl: urlPrefix + "/" + data.id + "/preview.jpg" });
     var geometry = new Marzipano.CubeGeometry(data.levels);
 
-    var limiter = Marzipano.RectilinearView.limit.traditional(data.faceSize, 100*Math.PI/180, 120*Math.PI/180);
+    var limiter = Marzipano.RectilinearView.limit.traditional((data.faceSize) * 2, 100*Math.PI/180, 120*Math.PI/180);
     var view = new Marzipano.RectilinearView(data.initialViewParameters, limiter);
 
     var scene = viewer.createScene({
@@ -242,7 +249,7 @@
     }
   }
 
-  // SKY_SURFER_PREVIEW_ENHANCER_V2
+  // SKY_SURFER_PREVIEW_ENHANCER_V23
   // Touch behavior: tap away from a link hotspot to close any open destination preview.
   document.addEventListener('click', function() {
     var openPreviews = document.querySelectorAll('.link-hotspot.preview-visible');
