@@ -987,6 +987,8 @@ body.fullscreen-enabled #fullscreenToggle { display:block; }
 #sceneListToggle::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M14%2019h36M14%2032h36M14%2045h36%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:center; background-size:72% 72%; pointer-events:none; }
 #sceneListToggle.enabled::before { background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M18%2018l28%2028M46%2018L18%2046%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E"); }
 /* Lighter, more refined scene-list glass instead of the original heavy gray block. */
+#sceneList { padding-top: 54px !important; }
+.mobile #sceneList { padding-top: 60px !important; }
 #sceneList .scenes {
   background: rgba(28,36,47,.44) !important;
   border-right: 1px solid rgba(255,255,255,.11);
@@ -1003,6 +1005,12 @@ body.fullscreen-enabled #fullscreenToggle { display:block; }
 #sceneList .scene.current .text { font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,.22); }
 .mobile #sceneListToggle { top:5px !important; left:5px !important; width:50px !important; height:50px !important; }
 
+/* Clean transparent video-style autorotate play/pause control. */
+#autorotateToggle { background:transparent !important; background-color:transparent !important; border:0 !important; box-shadow:none !important; position:relative; }
+#autorotateToggle img, #autorotateToggle .icon, #autorotateToggle .autorotate-toggle-icon { opacity:0 !important; visibility:hidden !important; }
+#autorotateToggle::before { content:''; position:absolute; left:50%; top:50%; transform:translate(-42%,-50%); width:0; height:0; border-top:10px solid transparent; border-bottom:10px solid transparent; border-left:16px solid rgba(255,255,255,.96); filter:drop-shadow(0 1px 2px rgba(0,0,0,.28)); }
+#autorotateToggle.enabled::before { width:16px; height:20px; border:0; transform:translate(-50%,-50%); background:linear-gradient(to right, rgba(255,255,255,.96) 0 5px, transparent 5px 11px, rgba(255,255,255,.96) 11px 16px); }
+.no-touch #autorotateToggle:hover { background:rgba(20,28,38,.08) !important; border-radius:8px; }
 
 /* Sky Surfer casual image-copy protection */
 #pano, #pano canvas, #pano img, .scene-preview-image {
