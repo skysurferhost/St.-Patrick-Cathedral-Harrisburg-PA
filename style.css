@@ -1006,7 +1006,10 @@ body.fullscreen-enabled #fullscreenToggle { display:block; }
 .mobile #sceneListToggle { top:5px !important; left:5px !important; width:50px !important; height:50px !important; }
 
 /* Clean transparent autorotate control. Keep Marzipano's original white video-style play/pause artwork. */
-#autorotateToggle { background:transparent !important; background-color:transparent !important; border:0 !important; box-shadow:none !important; }
+#autorotateToggle { background:transparent !important; background-color:transparent !important; border:0 !important; box-shadow:none !important; top:8px !important; right:54px !important; width:46px !important; height:46px !important; padding:0 !important; }
+#fullscreenToggle { top:8px !important; right:8px !important; }
+.mobile #autorotateToggle { top:5px !important; right:57px !important; width:52px !important; height:52px !important; }
+.mobile #fullscreenToggle { top:5px !important; right:5px !important; }
 #autorotateToggle .icon { opacity:1 !important; visibility:visible !important; filter:drop-shadow(0 1px 2px rgba(0,0,0,.32)); }
 #autorotateToggle .icon.off { display:block; }
 #autorotateToggle .icon.on { display:none; }

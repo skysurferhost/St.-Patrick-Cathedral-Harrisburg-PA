@@ -250,6 +250,14 @@
   }
 
   // SKY_SURFER_PREVIEW_ENHANCER_V26
+  // Touch behavior: tap away from a link hotspot to close any open destination preview.
+  document.addEventListener('click', function() {
+    var openPreviews = document.querySelectorAll('.link-hotspot.preview-visible');
+    for (var i = 0; i < openPreviews.length; i++) {
+      openPreviews[i].classList.remove('preview-visible');
+    }
+  });
+
   function createLinkHotspotElement(hotspot) {
 
     // Create wrapper element to hold icon and tooltip.
@@ -269,8 +277,27 @@
       icon.style[property] = 'rotate(' + hotspot.rotation + 'rad)';
     }
 
-    // Add click event handler.
-    wrapper.addEventListener('click', function() {
+    // Desktop: click navigates normally.
+    // Phone/tablet: first tap shows the destination preview; second tap navigates.
+    wrapper.addEventListener('click', function(event) {
+      var touchLike = document.body.classList.contains('touch') ||
+                      document.body.classList.contains('mobile') ||
+                      (window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches);
+
+      if (touchLike) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (!wrapper.classList.contains('preview-visible')) {
+          var openPreviews = document.querySelectorAll('.link-hotspot.preview-visible');
+          for (var i = 0; i < openPreviews.length; i++) {
+            openPreviews[i].classList.remove('preview-visible');
+          }
+          wrapper.classList.add('preview-visible');
+          return;
+        }
+      }
+
       switchScene(findSceneById(hotspot.target));
     });
 
@@ -278,11 +305,24 @@
     // This prevents the view control logic from interfering with the hotspot.
     stopTouchAndScrollEventPropagation(wrapper);
 
-    // Create tooltip element.
+    // Create destination preview tooltip.
     var tooltip = document.createElement('div');
     tooltip.classList.add('hotspot-tooltip');
     tooltip.classList.add('link-hotspot-tooltip');
-    tooltip.innerHTML = findSceneDataById(hotspot.target).name;
+    tooltip.classList.add('scene-preview-tooltip');
+
+    var targetScene = findSceneDataById(hotspot.target);
+
+    var previewImage = document.createElement('img');
+    previewImage.classList.add('scene-preview-image');
+    previewImage.src = 'thumbnails/' + hotspot.target + '.jpg';
+    previewImage.alt = targetScene.name;
+    var previewTitle = document.createElement('div');
+    previewTitle.classList.add('scene-preview-title');
+    previewTitle.innerHTML = targetScene.name;
+
+    tooltip.appendChild(previewImage);
+    tooltip.appendChild(previewTitle);
 
     wrapper.appendChild(icon);
     wrapper.appendChild(tooltip);
