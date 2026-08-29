@@ -831,7 +831,7 @@ body.view-control-buttons .viewControlButton {
 
 
 /* ================================================================
-   SKY_SURFER_PREVIEW_ENHANCER_V25
+   SKY_SURFER_PREVIEW_ENHANCER_V26
    Destination preview for Marzipano link hotspots.
    Desktop: hover. Touch: first tap previews, second tap enters.
    ================================================================ */
@@ -927,6 +927,58 @@ body.view-control-buttons .viewControlButton {
 }
 
 /* Navigation arrow style: Classic Marzipano */
+
+/* Fullscreen button style: corners */
+#fullscreenToggle { background: transparent !important; padding:0 !important; display:none; }
+body.fullscreen-enabled #fullscreenToggle { display:block; }
+#fullscreenToggle .icon { opacity:0 !important; width:100% !important; height:100% !important; top:0 !important; right:0 !important; }
+#fullscreenToggle::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M25%2014H14v11M39%2014h11v11M50%2039v11H39M25%2050H14V39%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:center; background-size:72% 72%; pointer-events:none; }
+#fullscreenToggle.enabled::before { background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M14%2025h11V14M50%2025H39V14M39%2050V39h11M25%2050V39H14%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E"); }
+#fullscreenToggle { width:46px !important; height:46px !important; } .mobile #fullscreenToggle{width:52px !important;height:52px !important;}
+
+/* Sky Surfer fully transparent top title treatment: text only, no bar/gradient. */
+#titleBar {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 60px !important;
+  pointer-events: none;
+}
+#titleBar .sceneName {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: 0 1px 5px rgba(0,0,0,.82);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 60px !important;
+}
+.mobile #titleBar { left:0 !important; right:0 !important; height:50px !important; }
+.mobile #titleBar .sceneName { line-height:40px !important; }
+
+
+/* Modern scene-list toggle inspired by the clean 3DGround Marzipano design. */
+#sceneListToggle {
+  top: 9px !important;
+  left: 9px !important;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+#sceneListToggle .icon { opacity:0 !important; width:100% !important; height:100% !important; top:0 !important; right:0 !important; }
+#sceneListToggle::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M14%2019h36M14%2032h36M14%2045h36%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:center; background-size:72% 72%; pointer-events:none; }
+#sceneListToggle.enabled::before { background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M18%2018l28%2028M46%2018L18%2046%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E"); }
+.mobile #sceneListToggle { top:5px !important; left:5px !important; width:50px !important; height:50px !important; }
+
 
 /* Sky Surfer casual image-copy protection */
 #pano, #pano canvas, #pano img, .scene-preview-image {

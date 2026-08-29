@@ -249,7 +249,7 @@
     }
   }
 
-  // SKY_SURFER_PREVIEW_ENHANCER_V25
+  // SKY_SURFER_PREVIEW_ENHANCER_V26
   // Touch behavior: tap away from a link hotspot to close any open destination preview.
   document.addEventListener('click', function() {
     var openPreviews = document.querySelectorAll('.link-hotspot.preview-visible');
