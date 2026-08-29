@@ -927,7 +927,14 @@ body.view-control-buttons .viewControlButton {
 }
 
 /* Navigation arrow style: Classic Marzipano */
-/* Fullscreen button style: Classic Marzipano */
+
+/* Fullscreen button style: corners */
+#fullscreenToggle { background: transparent !important; padding:0 !important; display:none; }
+body.fullscreen-enabled #fullscreenToggle { display:block; }
+#fullscreenToggle .icon { opacity:0 !important; width:100% !important; height:100% !important; top:0 !important; right:0 !important; }
+#fullscreenToggle::before { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M25%2014H14v11M39%2014h11v11M50%2039v11H39M25%2050H14V39%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:center; background-size:72% 72%; pointer-events:none; }
+#fullscreenToggle.enabled::before { background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M14%2025h11V14M50%2025H39V14M39%2050V39h11M25%2050V39H14%22%20fill%3D%22none%22%20stroke%3D%22white%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E"); }
+#fullscreenToggle { width:46px !important; height:46px !important; } .mobile #fullscreenToggle{width:52px !important;height:52px !important;}
 
 /* Sky Surfer fully transparent top title treatment: text only, no bar/gradient. */
 #titleBar {
