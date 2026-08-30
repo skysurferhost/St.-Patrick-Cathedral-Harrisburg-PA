@@ -831,7 +831,7 @@ body.view-control-buttons .viewControlButton {
 
 
 /* ================================================================
-   SKY_SURFER_PREVIEW_ENHANCER_V26
+   SKY_SURFER_PREVIEW_ENHANCER_V30
    Destination preview for Marzipano link hotspots.
    Desktop: hover. Touch: first tap previews, second tap enters.
    ================================================================ */
@@ -963,6 +963,7 @@ body.fullscreen-enabled #fullscreenToggle { display:block; }
   line-height:40px !important;
   display:block !important;
   position:absolute !important;
+  top:5px !important;
   left:64px !important;
   right:112px !important;
   width:auto !important;
