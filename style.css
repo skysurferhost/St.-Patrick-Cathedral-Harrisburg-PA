@@ -959,7 +959,20 @@ body.fullscreen-enabled #fullscreenToggle { display:block; }
   line-height: 60px !important;
 }
 .mobile #titleBar { left:0 !important; right:0 !important; height:50px !important; }
-.mobile #titleBar .sceneName { line-height:40px !important; }
+.mobile #titleBar .sceneName {
+  line-height:40px !important;
+  display:block !important;
+  position:absolute !important;
+  left:64px !important;
+  right:112px !important;
+  width:auto !important;
+  max-width:none !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+  text-align:center !important;
+  box-sizing:border-box !important;
+}
 
 
 /* Modern scene-list toggle: transparent when closed, subtle glass when open. */
