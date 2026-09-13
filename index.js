@@ -77,6 +77,35 @@
   // Initialize viewer.
   var viewer = new Marzipano.Viewer(panoElement, viewerOpts);
 
+  // SKY_SURFER_LANDSCAPE_VIEWPORT_REFRESH_V1
+  var ssViewportRefreshTimer = null;
+  function ssRefreshPanoramaViewport() {
+    if (ssViewportRefreshTimer) {
+      clearTimeout(ssViewportRefreshTimer);
+      ssViewportRefreshTimer = null;
+    }
+
+    requestAnimationFrame(function() {
+      if (viewer && typeof viewer.updateSize === 'function') viewer.updateSize();
+      requestAnimationFrame(function() {
+        if (viewer && typeof viewer.updateSize === 'function') viewer.updateSize();
+      });
+    });
+
+    ssViewportRefreshTimer = setTimeout(function() {
+      ssViewportRefreshTimer = null;
+      if (viewer && typeof viewer.updateSize === 'function') viewer.updateSize();
+    }, 320);
+  }
+
+  window.addEventListener('orientationchange', ssRefreshPanoramaViewport);
+  window.addEventListener('resize', ssRefreshPanoramaViewport);
+  document.addEventListener('fullscreenchange', ssRefreshPanoramaViewport);
+  document.addEventListener('webkitfullscreenchange', ssRefreshPanoramaViewport);
+  if (window.visualViewport && window.visualViewport.addEventListener) {
+    window.visualViewport.addEventListener('resize', ssRefreshPanoramaViewport);
+  }
+
   // Create scenes.
   var scenes = data.scenes.map(function(data) {
     var urlPrefix = "tiles";
@@ -85,7 +114,7 @@
       { cubeMapPreviewUrl: urlPrefix + "/" + data.id + "/preview.jpg" });
     var geometry = new Marzipano.CubeGeometry(data.levels);
 
-    var limiter = Marzipano.RectilinearView.limit.traditional((data.faceSize) * 2, 100*Math.PI/180, 120*Math.PI/180);
+    var limiter = Marzipano.RectilinearView.limit.traditional((data.faceSize) * 2.5, 100*Math.PI/180, 120*Math.PI/180);
     var view = new Marzipano.RectilinearView(data.initialViewParameters, limiter);
 
     var scene = viewer.createScene({
@@ -273,6 +302,173 @@
 
   // SKY_SURFER_TOOLS_BUILD_V8_4
   // SKY_SURFER_PREVIEW_ENHANCER_V33
+  // SKY_SURFER_PROJECT_COMPATIBILITY=STANDARD
+  // SKY_SURFER_SPECIAL_PREVIEW_MODE=OFF
+  // Touch behavior: tap away from a link hotspot to close any open destination preview.
+  document.addEventListener('click', function() {
+    var openPreviews = document.querySelectorAll('.link-hotspot.preview-visible');
+    for (var i = 0; i < openPreviews.length; i++) {
+      openPreviews[i].classList.remove('preview-visible');
+    }
+  });
+
+  // SKY SURFER v7.6: deterministic idle UI monitor.
+  var ssNavIdleDelay = 3000;
+  var ssNavLastActivityAt = Date.now();
+  var ssNavIdleState = false;
+  var ssNavLastPointerX = null;
+  var ssNavLastPointerY = null;
+  var ssNavMoveAccumulator = 0;
+
+  function ssNavApplyIdleState(isIdle) {
+    if (!document.body) return;
+    ssNavIdleState = !!isIdle;
+    document.body.classList.toggle('ss-nav-hotspots-idle', ssNavIdleState);
+    // Desktop previews are class-driven by verified physical mouse movement; the class is cleared below when needed.
+  }
+
+  function ssNavRecordActivity() {
+    ssNavLastActivityAt = Date.now();
+    ssNavMoveAccumulator = 0;
+    if (ssNavIdleState) ssNavApplyIdleState(false);
+  }
+
+  function ssNavPointerPoint(event) {
+    if (!event) return null;
+    if (event.touches && event.touches.length) {
+      return { x:Number(event.touches[0].clientX), y:Number(event.touches[0].clientY) };
+    }
+    if (event.changedTouches && event.changedTouches.length) {
+      return { x:Number(event.changedTouches[0].clientX), y:Number(event.changedTouches[0].clientY) };
+    }
+    if (typeof event.clientX === 'number' && typeof event.clientY === 'number') {
+      return { x:Number(event.clientX), y:Number(event.clientY) };
+    }
+    return null;
+  }
+
+  function ssNavHandleMove(event) {
+    if (!event || event.isTrusted === false) return;
+
+    var dx = 0;
+    var dy = 0;
+    if (typeof event.movementX === 'number' && typeof event.movementY === 'number') {
+      dx = event.movementX;
+      dy = event.movementY;
+    }
+
+    var point = ssNavPointerPoint(event);
+    if ((!dx && !dy) && point && Number.isFinite(point.x) && Number.isFinite(point.y) &&
+        ssNavLastPointerX !== null && ssNavLastPointerY !== null) {
+      dx = point.x - ssNavLastPointerX;
+      dy = point.y - ssNavLastPointerY;
+    }
+
+    if (point && Number.isFinite(point.x) && Number.isFinite(point.y)) {
+      ssNavLastPointerX = point.x;
+      ssNavLastPointerY = point.y;
+    }
+
+    var distance = Math.hypot(dx, dy);
+    if (!Number.isFinite(distance) || distance <= 0) return;
+
+    // Require a few pixels of accumulated physical pointer motion. This ignores
+    // stationary-cursor target changes and tiny rendering/layout jitter.
+    ssNavMoveAccumulator += distance;
+    if (ssNavMoveAccumulator >= 3) ssNavRecordActivity();
+  }
+
+  function ssNavHandleImmediateActivity(event) {
+    if (event && event.isTrusted === false) return;
+    var point = ssNavPointerPoint(event);
+    if (point && Number.isFinite(point.x) && Number.isFinite(point.y)) {
+      ssNavLastPointerX = point.x;
+      ssNavLastPointerY = point.y;
+    }
+    ssNavRecordActivity();
+  }
+
+  function ssNavMarkIdleElement(element) {
+    if (!element || !element.classList) return;
+    // Keep an opened information panel readable, but allow an opened scene list
+    // to fade with the rest of the tour controls during the idle presentation state.
+    if (element.classList.contains('info-hotspot') ||
+        element.classList.contains('info-hotspot-modal')) return;
+    element.classList.add('ss-idle-ui');
+  }
+
+  function ssNavCollectIdleElements(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+    var selectors = [
+      '.link-hotspot',
+      '#titleBar',
+      '#sceneList',
+      '#sceneListToggle',
+      '#autorotateToggle',
+      '#fullscreenToggle',
+      '.viewControlButton',
+      '#viewUp', '#viewDown', '#viewLeft', '#viewRight', '#viewIn', '#viewOut',
+      '.ss-audio-player',
+      '#player.player',
+      '.player#player'
+    ];
+
+    if (root && root.matches) {
+      for (var r = 0; r < selectors.length; r++) {
+        try {
+          if (root.matches(selectors[r])) ssNavMarkIdleElement(root);
+        } catch (_) {}
+      }
+    }
+
+    for (var i = 0; i < selectors.length; i++) {
+      var found;
+      try { found = scope.querySelectorAll(selectors[i]); }
+      catch (_) { found = []; }
+      for (var j = 0; j < found.length; j++) ssNavMarkIdleElement(found[j]);
+    }
+  }
+
+  ssNavCollectIdleElements(document);
+
+  if (window.MutationObserver && document.documentElement) {
+    var ssNavObserver = new MutationObserver(function(records) {
+      for (var i = 0; i < records.length; i++) {
+        for (var j = 0; j < records[i].addedNodes.length; j++) {
+          var node = records[i].addedNodes[j];
+          if (node && node.nodeType === 1) ssNavCollectIdleElements(node);
+        }
+      }
+    });
+    ssNavObserver.observe(document.documentElement, { childList:true, subtree:true });
+  }
+
+  var ssNavPassiveOptions = { capture:true, passive:true };
+  var ssNavActiveOptions = { capture:true };
+
+  if (window.PointerEvent) {
+    document.addEventListener('pointermove', ssNavHandleMove, ssNavPassiveOptions);
+    document.addEventListener('pointerdown', ssNavHandleImmediateActivity, ssNavPassiveOptions);
+  } else {
+    document.addEventListener('mousemove', ssNavHandleMove, ssNavPassiveOptions);
+    document.addEventListener('mousedown', ssNavHandleImmediateActivity, ssNavPassiveOptions);
+    document.addEventListener('touchstart', ssNavHandleImmediateActivity, ssNavPassiveOptions);
+    document.addEventListener('touchmove', ssNavHandleMove, ssNavPassiveOptions);
+  }
+
+  document.addEventListener('wheel', ssNavHandleImmediateActivity, ssNavPassiveOptions);
+  document.addEventListener('click', ssNavHandleImmediateActivity, ssNavPassiveOptions);
+  document.addEventListener('keydown', ssNavHandleImmediateActivity, ssNavActiveOptions);
+  document.addEventListener('gesturestart', ssNavHandleImmediateActivity, ssNavPassiveOptions);
+  document.addEventListener('gesturechange', ssNavHandleImmediateActivity, ssNavPassiveOptions);
+
+  // Do not treat resize, orientation, focus, visibility, or autorotation as visitor
+  // interaction. Only actual user input should keep the controls awake.
+  window.setInterval(function() {
+    var shouldBeIdle = (Date.now() - ssNavLastActivityAt) >= ssNavIdleDelay;
+    if (shouldBeIdle !== ssNavIdleState) ssNavApplyIdleState(shouldBeIdle);
+  }, 200);
+
   function createLinkHotspotElement(hotspot) {
 
     // Create wrapper element to hold icon and tooltip.
@@ -293,19 +489,116 @@
     }
 
     // Add click event handler.
-    wrapper.addEventListener('click', function() {
+    // Desktop: click navigates normally.
+    // Phone/tablet: first tap shows the destination preview; second tap navigates.
+    wrapper.addEventListener('click', function(event) {
+      var touchLike = document.body.classList.contains('touch') ||
+                      document.body.classList.contains('mobile') ||
+                      (window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches);
+
+      if (touchLike) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (!wrapper.classList.contains('preview-visible')) {
+          var openPreviews = document.querySelectorAll('.link-hotspot.preview-visible');
+          for (var i = 0; i < openPreviews.length; i++) {
+            openPreviews[i].classList.remove('preview-visible');
+          }
+          wrapper.classList.add('preview-visible');
+          return;
+        }
+      }
+
       switchScene(findSceneById(hotspot.target));
     });
+
+    var ssStandardPreviewHideTimer = null;
+
+    function ssStandardPreviewShow() {
+      if (ssStandardPreviewHideTimer !== null) {
+        window.clearTimeout(ssStandardPreviewHideTimer);
+        ssStandardPreviewHideTimer = null;
+      }
+
+      var openStandardPreviews = document.querySelectorAll('.link-hotspot.ss-standard-preview-visible');
+      for (var s = 0; s < openStandardPreviews.length; s++) {
+        if (openStandardPreviews[s] !== wrapper) {
+          openStandardPreviews[s].classList.remove('ss-standard-preview-visible');
+        }
+      }
+
+      wrapper.classList.add('ss-standard-preview-visible');
+    }
+
+    function ssStandardPreviewScheduleHide() {
+      if (ssStandardPreviewHideTimer !== null) {
+        window.clearTimeout(ssStandardPreviewHideTimer);
+      }
+
+      ssStandardPreviewHideTimer = window.setTimeout(function() {
+        ssStandardPreviewHideTimer = null;
+        if (wrapper.matches(':hover')) return;
+        wrapper.classList.remove('ss-standard-preview-visible');
+      }, 500);
+    }
+
+    wrapper.addEventListener('mouseenter', ssStandardPreviewShow);
+    wrapper.addEventListener('mouseleave', ssStandardPreviewScheduleHide);
+
 
     // Prevent touch and scroll events from reaching the parent element.
     // This prevents the view control logic from interfering with the hotspot.
     stopTouchAndScrollEventPropagation(wrapper);
 
     // Create tooltip element.
+    // SKY SURFER: isolated destination preview. This intentionally does NOT
+    // reuse Marzipano's .link-hotspot-tooltip class so older/custom project CSS
+    // cannot crop, resize, or distort the 16:9 destination card.
     var tooltip = document.createElement('div');
-    tooltip.classList.add('hotspot-tooltip');
-    tooltip.classList.add('link-hotspot-tooltip');
-    tooltip.innerHTML = findSceneDataById(hotspot.target).name;
+    tooltip.classList.add('ss-scene-preview-anchor');
+
+    var targetScene = findSceneDataById(hotspot.target);
+
+    var previewCard = document.createElement('div');
+    previewCard.classList.add('ss-scene-preview-card');
+
+    var previewMedia = document.createElement('div');
+    previewMedia.classList.add('ss-scene-preview-media');
+
+    var previewImage = document.createElement('img');
+    previewImage.classList.add('ss-scene-preview-image');
+    previewImage.src = 'thumbnails/' + hotspot.target + '.jpg';
+    previewImage.alt = targetScene.name;
+    previewMedia.appendChild(previewImage);
+    var previewTitle = document.createElement('div');
+    previewTitle.classList.add('ss-scene-preview-title');
+    previewTitle.textContent = targetScene.name;
+
+    previewCard.appendChild(previewMedia);
+    previewCard.appendChild(previewTitle);
+    previewCard.addEventListener('mouseenter', function() {
+      if (wrapper.classList.contains('ss-standard-preview-visible')) {
+        if (typeof ssStandardPreviewHideTimer !== 'undefined' && ssStandardPreviewHideTimer !== null) {
+          window.clearTimeout(ssStandardPreviewHideTimer);
+          ssStandardPreviewHideTimer = null;
+        }
+      }
+    });
+
+    previewCard.addEventListener('mouseleave', function() {
+      if (wrapper.classList.contains('ss-standard-preview-visible') &&
+          typeof ssStandardPreviewScheduleHide === 'function') {
+        ssStandardPreviewScheduleHide();
+      }
+    });
+
+    previewCard.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      switchScene(findSceneById(hotspot.target));
+    });
+    tooltip.appendChild(previewCard);
 
     wrapper.appendChild(icon);
     wrapper.appendChild(tooltip);
